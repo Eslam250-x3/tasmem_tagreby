@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بيئة التعلم القائمة على حشد المصادر لمقرر الفلسفة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-20px) translateX(-10px); }
+            66% { transform: translateY(20px) translateX(10px); }
+        }
+        
+        .screen {
+            display: none;
+            min-height: 100vh;
+            justify-content: center;
+            position: relative;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+            animation: screenIn 0.5s ease-out;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        @keyframes screenIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Glass Morphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1),
+                        0 0 20px rgba(255, 255, 255, 0.5) inset;
+        }
+        
+        /* Enhanced Header */
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.3);
+        }
+        
+        /* Option Cards with Hover Effect */
+        .option-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .option-card:hover::before {
+            left: 100%;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .option-card.selected {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 2px solid #667eea;
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(118, 75, 162, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(118, 75, 162, 0.4);
+        }
+        
+        /* Icon Animations */
+        .icon-float {
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Pulse Animation for Important Elements */
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+            }
+        }
+        
+        /* Modal Styles Enhanced */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) rotateX(10deg);
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1) rotateX(0deg);
+        }
+        
+        /* Navigation Dots Enhanced */
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+        
+        .nav-dot:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .shimmer {
+            animation: shimmer 2s infinite;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen 1: Splash Screen -->
+    <div id="splashScreen" class="screen active flex-col" style="padding-top: 0; align-items: center;">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="home" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">الصفحة الرئيسية</h1>
+            </div>
+        </header>
+        <div class="text-center max-w-4xl w-full mx-auto fade-in p-8 pt-32">
+            <div class="glass-card p-12 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-300 to-pink-300 rounded-full filter blur-3xl opacity-20 -z-10"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-300 to-cyan-300 rounded-full filter blur-3xl opacity-20 -z-10"></div>
+                
+                <img src="https://i.ibb.co/4RkPFhGy/image.png" alt="شعار الجامعة" class="w-32 h-32 rounded-full shadow-2xl border-4 border-white mx-auto mb-8 icon-float">
+                
+                <div class="mb-8">
+                    <ion-icon name="school" class="text-8xl gradient-text icon-float"></ion-icon>
+                </div>
+                
+                <h1 class="text-5xl md:text-6xl font-bold gradient-text mb-6 leading-relaxed">
+                    بيئة التعلم القائمة على حشد المصادر
+                </h1>
+                <h2 class="text-3xl font-semibold text-gray-700 mb-6">
+                    مقرر الفلسفة
+                </h2>
+                <p class="text-xl md:text-2xl text-gray-600 mb-6 leading-relaxed">
+                    أثر التفاعل بين نمطي حشد المصادر وزمنه في تنمية مهارات حل المشكلات والتدفق الذهني
+                </p>
+                <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-2xl mb-8">
+                    <p class="text-lg text-gray-700 font-semibold">
+                        <ion-icon name="person-circle" class="text-2xl align-middle ml-2"></ion-icon>
+                        الباحث / اسلام محمد عبد النبي احمد الدبركي
+                    </p>
+                </div>
+                <button onclick="navigateNext()" class="btn-primary group">
+                    <span class="flex items-center justify-center gap-2">
+                        ابدأ رحلة التعلم
+                        <ion-icon name="arrow-back-circle" class="text-2xl group-hover:translate-x-[-5px] transition-transform"></ion-icon>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Pre-Test Link Screen -->
+    <div id="preTestLinkScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="clipboard-outline" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">الاختبار القبلي</h1>
+            </div>
+        </header>
+        <div class="max-w-7xl w-full mx-auto fade-in p-8">
+            <div class="glass-card p-8 md:p-12">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <!-- Right Side: Instructions -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <ion-icon name="information-circle" class="text-4xl text-purple-600"></ion-icon>
+                            <h2 class="text-3xl font-bold gradient-text">تعليمات الاختبار القبلي</h2>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border-r-4 border-purple-500">
+                            <p class="text-xl text-gray-700 leading-relaxed mb-4">
+                                <ion-icon name="checkmark-circle" class="text-green-500 text-2xl align-middle ml-2"></ion-icon>
+                                عزيزي الطالب / عزيزتي الطالبة
+                            </p>
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                قم بالدخول إلى الاختبار وتسجيل بياناتك والإجابة عن جميع الأسئلة بدقة.
+                            </p>
+                        </div>
+                        <div class="bg-amber-50 border-r-4 border-amber-400 p-4 rounded-xl mt-6">
+                            <p class="text-gray-700 flex items-start gap-2">
+                                <ion-icon name="alert-circle" class="text-amber-500 text-xl flex-shrink-0 mt-1"></ion-icon>
+                                إذا لم يظهر الاختبار بشكل صحيح، استخدم الزر أدناه لفتحه في نافذة جديدة.
+                            </p>
+                        </div>
+                        <div class="text-center mt-8">
+                            <a href="https://forms.gle/tGosYBi9yJ68H9Cu7" target="_blank" 
+                               class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                <ion-icon name="open-outline" class="text-xl"></ion-icon>
+                                فتح الاختبار في نافذة جديدة
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Left Side: Embedded Form -->
+                    <div class="rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-200" style="height: 75vh;">
+                        <iframe src="https://forms.gle/tGosYBi9yJ68H9Cu7?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                    </div>
+                </div>
+
+                <!-- Navigation Button -->
+                <div class="text-center mt-12 border-t border-gray-200 pt-8">
+                    <button onclick="navigateNext()" class="btn-primary">
+                        <span class="flex items-center justify-center gap-2">
+                            متابعة إلى الأهداف التعليمية
+                            <ion-icon name="arrow-back-circle-outline" class="text-2xl"></ion-icon>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Objectives Screen -->
+    <div id="objectivesScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="flag" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">الأهداف التعليمية</h1>
+            </div>
+        </header>
+        <div class="max-w-6xl w-full mx-auto fade-in p-8">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <div class="relative inline-block">
+                        <ion-icon name="trophy" class="text-8xl gradient-text icon-float"></ion-icon>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full animate-pulse flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">5</span>
+                        </div>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4 mt-6">الأهداف التعليمية للوحدة</h1>
+                    <p class="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                        <ion-icon name="book" class="text-2xl align-middle ml-2"></ion-icon>
+                        الأخلاق البيوطبية - بعد إتمام الوحدة ستكون قادراً على:
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <!-- الهدف الأول -->
+                    <div class="option-card glass-card p-6 border-r-4 border-blue-500">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center ml-3">
+                                <ion-icon name="search" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">التفسير</h3>
+                        </div>
+                        <p class="text-lg text-gray-700 leading-relaxed">تفسير مفهوم الأخلاق التطبيقية والبيوتيقية بشكل واضح ودقيق.</p>
+                    </div>
+                    
+                    <!-- الهدف الثاني -->
+                    <div class="option-card glass-card p-6 border-r-4 border-green-500">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center ml-3">
+                                <ion-icon name="git-branch" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">التمييز</h3>
+                        </div>
+                        <p class="text-lg text-gray-700 leading-relaxed">التمييز بين مجالات الأخلاق البيوطبية المختلفة.</p>
+                    </div>
+                    
+                    <!-- الهدف الثالث -->
+                    <div class="option-card glass-card p-6 border-r-4 border-yellow-500">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center ml-3">
+                                <ion-icon name="bulb" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">التدليل</h3>
+                        </div>
+                        <p class="text-lg text-gray-700 leading-relaxed">التدليل على القضايا الفلسفية والأخلاقية في المجال الطبي.</p>
+                    </div>
+                    
+                    <!-- الهدف الرابع -->
+                    <div class="option-card glass-card p-6 border-r-4 border-purple-500">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center ml-3">
+                                <ion-icon name="construct" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">التطبيق</h3>
+                        </div>
+                        <p class="text-lg text-gray-700 leading-relaxed">تطبيق أخلاقيات البحث المتعلقة بالوراثة البشرية.</p>
+                    </div>
+                    
+                    <!-- الهدف الخامس -->
+                    <div class="option-card glass-card p-6 border-r-4 border-red-500">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center ml-3">
+                                <ion-icon name="filter" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">الاستخلاص</h3>
+                        </div>
+                        <p class="text-lg text-gray-700 leading-relaxed">استخلاص معايير الأخلاقيات الطبية الحديثة.</p>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="navigateNext()" class="btn-primary">
+                        <span class="flex items-center justify-center gap-2">
+                            متابعة إلى اختيار المجموعة التجريبية
+                            <ion-icon name="arrow-back-circle-outline" class="text-2xl"></ion-icon>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Group Selection Screen -->
+    <div id="groupSelectionScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="grid" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">اختيار المجموعة التجريبية</h1>
+            </div>
+        </header>
+        <div class="max-w-7xl w-full mx-auto fade-in p-8">
+            <div class="text-center mb-12">
+                <ion-icon name="rocket" class="text-8xl gradient-text icon-float"></ion-icon>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 mt-6 drop-shadow-lg">اختر مجموعتك التجريبية</h1>
+                <p class="text-xl text-white leading-relaxed max-w-3xl mx-auto mb-8 drop-shadow-md">
+                    اختر المجموعة التي تناسب أسلوب تعلمك - كل مجموعة توفر تجربة تعليمية فريدة
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Group 1: competitive-open -->
+                <div onclick="selectGroup('competitive-open')" class="option-card glass-card p-6 cursor-pointer border-2 border-transparent group" data-groupkey="competitive-open">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="medal" class="text-white text-5xl"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-bold gradient-text mb-2">المجموعة الأولى</h3>
+                        <div class="bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-full mb-4">
+                            <p class="text-lg font-semibold text-orange-700">تنافسي / مفتوح</p>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">
+                            عمل <strong>فردي</strong> بمرونة تامة<br>
+                            <span class="text-green-600 font-semibold">موعد نهائي واحد فقط</span><br>
+                            في نهاية التجربة (21 يوم)
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Group 2: competitive-fixed -->
+                <div onclick="selectGroup('competitive-fixed')" class="option-card glass-card p-6 cursor-pointer border-2 border-transparent group" data-groupkey="competitive-fixed">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="timer" class="text-white text-5xl"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-bold gradient-text mb-2">المجموعة الثانية</h3>
+                        <div class="bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 rounded-full mb-4">
+                            <p class="text-lg font-semibold text-amber-700">تنافسي / مقيد</p>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">
+                            عمل <strong>فردي</strong> مع تحدي زمني<br>
+                            <span class="text-red-600 font-semibold">5 مواعيد نهائية صارمة</span><br>
+                            لكل مهمة موعد محدد
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Group 3: collaborative-open -->
+                <div onclick="selectGroup('collaborative-open')" class="option-card glass-card p-6 cursor-pointer border-2 border-transparent group" data-groupkey="collaborative-open">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="people-circle" class="text-white text-5xl"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-bold gradient-text mb-2">المجموعة الثالثة</h3>
+                        <div class="bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-2 rounded-full mb-4">
+                            <p class="text-lg font-semibold text-blue-700">تشاركي / مفتوح</p>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">
+                            عمل <strong>جماعي</strong> بمرونة تامة<br>
+                            <span class="text-green-600 font-semibold">موعد نهائي واحد فقط</span><br>
+                            تسليم جماعي (21 يوم)
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Group 4: collaborative-fixed -->
+                <div onclick="selectGroup('collaborative-fixed')" class="option-card glass-card p-6 cursor-pointer border-2 border-transparent group" data-groupkey="collaborative-fixed">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-teal-400 to-green-500 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="git-network" class="text-white text-5xl"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-bold gradient-text mb-2">المجموعة الرابعة</h3>
+                        <div class="bg-gradient-to-r from-teal-100 to-green-100 px-4 py-2 rounded-full mb-4">
+                            <p class="text-lg font-semibold text-teal-700">تشاركي / مقيد</p>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">
+                            عمل <strong>جماعي</strong> مع تحدي زمني<br>
+                            <span class="text-red-600 font-semibold">5 مواعيد نهائية صارمة</span><br>
+                            تسليم جماعي منظم
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button onclick="confirmGroupSelection()" id="confirmGroupBtn" disabled 
+                        class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="flex items-center justify-center gap-2">
+                        تأكيد الاختيار والانتقال للفصول
+                        <ion-icon name="checkmark-circle" class="text-2xl"></ion-icon>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 5: User Guide Screen -->
+    <div id="guideScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="map" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">دليل الاستخدام</h1>
+            </div>
+        </header>
+        <div class="max-w-6xl w-full mx-auto fade-in p-8">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <ion-icon name="compass" class="text-8xl gradient-text icon-float"></ion-icon>
+                    <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4 mt-6">دليل استخدام Google Classroom</h1>
+                    <p class="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                        تعرف على الأدوات الرئيسية لبيئة التعلم للتفاعل معها بفعالية
+                    </p>
+                </div>
+                
+                <!-- Guide Content -->
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <!-- Guide Item 1 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="megaphone" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">ساحة المشاركات</h3>
+                        <p class="text-gray-600">مركز الإعلانات والمواد التعليمية والتواصل مع الباحث</p>
+                    </div>
+                    
+                    <!-- Guide Item 2 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="document-text" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">الواجب الدراسي</h3>
+                        <p class="text-gray-600">القسم الأهم - جميع المهام والأنشطة والاختبارات المطلوبة</p>
+                        <span class="inline-block mt-2 px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-semibold">مهم جداً</span>
+                    </div>
+                    
+                    <!-- Guide Item 3 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="people-circle" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">الأشخاص</h3>
+                        <p class="text-gray-600">عرض الباحث والزملاء في نفس المجموعة التجريبية</p>
+                    </div>
+                    
+                    <!-- Guide Item 4 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="key" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">خطوات الانضمام</h3>
+                        <p class="text-gray-600">استخدم رمز الفصل للانضمام إلى مجموعتك التجريبية</p>
+                        <span class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">خطوة مهمة</span>
+                    </div>
+                    
+                    <!-- Guide Item 5 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="chatbubbles" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">التفاعل مع المهام</h3>
+                        <p class="text-gray-600">إرسال المهام، التعليق، والتفاعل مع الزملاء</p>
+                    </div>
+                    
+                    <!-- Guide Item 6 -->
+                    <div class="option-card glass-card p-8 text-center group">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <ion-icon name="mail" class="text-white text-4xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">التواصل مع الباحث</h3>
+                        <p class="text-gray-600">إرسال الرسائل والاستفسارات مباشرة للباحث</p>
+                    </div>
+                </div>
+                
+                <!-- Instructions Section -->
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 p-8 rounded-2xl mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">تعليمات مهمة للطلاب</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <ion-icon name="checkmark-circle" class="text-green-500"></ion-icon>
+                                نصائح للنجاح
+                            </h4>
+                            <ul class="text-gray-600 space-y-2">
+                                <li>• تحقق من المهام يومياً</li>
+                                <li>• اقرأ التعليمات بعناية</li>
+                                <li>• احفظ رمز الفصل الدراسي</li>
+                                <li>• تواصل مع الباحث عند الحاجة</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h4 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <ion-icon name="warning" class="text-amber-500"></ion-icon>
+                                تنبيهات مهمة
+                            </h4>
+                            <ul class="text-gray-600 space-y-2">
+                                <li>• احترم مواعيد التسليم</li>
+                                <li>• لا تشارك رمز الفصل مع آخرين</li>
+                                <li>• استخدم اللغة العربية في التواصل</li>
+                                <li>• تواصل باحترام مع الزملاء</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">تواصل معنا</h3>
+                    <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                        <a href="#" onclick="window.open('mailto:researcher@university.edu', '_blank'); return false;" 
+                           class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-all transform hover:-translate-y-1 shadow-lg">
+                            <ion-icon name="mail" class="text-xl"></ion-icon>
+                            البريد الإلكتروني
+                        </a>
+                        <a href="#" onclick="window.open('https://wa.me/1234567890', '_blank'); return false;" 
+                           class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-semibold transition-all transform hover:-translate-y-1 shadow-lg">
+                            <ion-icon name="logo-whatsapp" class="text-xl"></ion-icon>
+                            واتساب
+                        </a>
+                        <a href="#" onclick="window.open('https://www.facebook.com/', '_blank'); return false;" 
+                           class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition-all transform hover:-translate-y-1 shadow-lg">
+                            <ion-icon name="logo-facebook" class="text-xl"></ion-icon>
+                            صفحة الفيسبوك
+                        </a>
+                        <a href="#" onclick="window.open('https://www.youtube.com/', '_blank'); return false;" 
+                           class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-semibold transition-all transform hover:-translate-y-1 shadow-lg">
+                            <ion-icon name="logo-youtube" class="text-xl"></ion-icon>
+                            قناة اليوتيوب
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="navigateNext()" class="btn-primary">
+                        <span class="flex items-center justify-center gap-2">
+                            متابعة إلى المراجع
+                            <ion-icon name="arrow-back-circle-outline" class="text-2xl"></ion-icon>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 6: References Screen -->
+    <div id="referencesScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="library" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">المراجع ومصادر الاطلاع</h1>
+            </div>
+        </header>
+        <div class="max-w-6xl w-full mx-auto fade-in p-8">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <ion-icon name="book" class="text-8xl gradient-text icon-float"></ion-icon>
+                    <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4 mt-6">المراجع ومصادر الاطلاع</h1>
+                    <p class="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                        قائمة منتقاة من المراجع الأساسية للتعمق في موضوعات الوحدة
+                    </p>
+                </div>
+                
+                <!-- References List -->
+                <div class="space-y-6">
+                    <!-- Reference 1 -->
+                    <div class="option-card glass-card p-6 border-r-4 border-indigo-500">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center ml-4 flex-shrink-0">
+                                <ion-icon name="document-text" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">الأخلاق البيوطبية</h3>
+                                <p class="text-gray-700 leading-relaxed">Beauchamp, T. L., & Childress, J. F. (2019). <em>Principles of Biomedical Ethics</em> (8th ed.). Oxford University Press.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reference 2 -->
+                    <div class="option-card glass-card p-6 border-r-4 border-blue-500">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center ml-4 flex-shrink-0">
+                                <ion-icon name="newspaper" class="text-white text-2xl"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">البيوتيقا: قضايا معاصرة</h3>
+                                <p class="text-gray-700 leading-relaxed">قنصوه، صلاح. (2017). <em>البيوتيقا: قضايا الأخلاق التطبيقية والفلسفة العملية</em>. دار التنوير للطباعة والنشر.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12 pt-8 border-t border-gray-200">
+                    <button onclick="navigateNext()" class="btn-primary">
+                        <span class="flex items-center justify-center gap-2">
+                            متابعة إلى معلومات المجموعة
+                            <ion-icon name="arrow-back-circle-outline" class="text-2xl"></ion-icon>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 7: Group Info Screen -->
+    <div id="groupInfoScreen" class="screen flex-col">
+        <header class="absolute top-0 left-0 right-0 header-gradient text-white p-4 h-20 flex items-center justify-center z-10">
+            <div class="flex items-center gap-3">
+                <ion-icon name="checkmark-done-circle" class="text-3xl"></ion-icon>
+                <h1 class="text-2xl font-bold">الانضمام إلى المجموعة</h1>
+            </div>
+        </header>
+        <div class="max-w-3xl w-full mx-auto fade-in p-8 text-center">
+            <div class="glass-card p-8 md:p-12">
+                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mx-auto mb-6 pulse-glow">
+                    <ion-icon name="checkmark-circle" class="text-white text-7xl"></ion-icon>
+                </div>
+                
+                <h2 class="text-4xl font-bold gradient-text mb-4">تم تحديد مجموعتك بنجاح!</h2>
+                <p class="text-xl text-gray-600 mb-8">احتفظ بالمعلومات التالية للانضمام إلى مجموعتك</p>
+                
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-8 rounded-2xl mb-8">
+                    <div class="space-y-4 text-right">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-xl">
+                            <span class="text-xl font-bold text-purple-700">المجموعة:</span>
+                            <span id="groupNumber" class="text-xl font-semibold text-gray-800"></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-xl">
+                            <span class="text-xl font-bold text-purple-700">اسم المجموعة:</span>
+                            <span id="groupName" class="text-lg text-gray-800"></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-xl">
+                            <span class="text-xl font-bold text-purple-700">رمز الفصل:</span>
+                            <span id="groupCode" class="font-mono text-2xl bg-gray-100 px-4 py-2 rounded-lg text-gray-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="openClassroomLink()" class="btn-primary w-full group">
+                    <span class="flex items-center justify-center gap-3">
+                        <ion-icon name="school" class="text-3xl group-hover:rotate-12 transition-transform"></ion-icon>
+                        الانتقال إلى Google Classroom
+                        <ion-icon name="open-outline" class="text-2xl"></ion-icon>
+                    </span>
+                </button>
+                
+                <div class="mt-6 p-4 bg-amber-50 rounded-xl border-r-4 border-amber-400">
+                    <p class="text-amber-700 flex items-center justify-center gap-2">
+                        <ion-icon name="information-circle" class="text-xl"></ion-icon>
+                        احفظ رمز الفصل قبل الانتقال
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div id="navigationControls" class="fixed bottom-0 left-0 right-0 h-24 z-50 flex items-center justify-between px-8">
+        <!-- Previous Button -->
+        <button id="prevBtn" onclick="navigatePrevious()" 
+                class="flex items-center justify-center w-16 h-16 rounded-full glass-card shadow-xl hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <ion-icon name="chevron-forward" class="text-3xl text-purple-600"></ion-icon>
+        </button>
+        
+
+        <!-- Next Button -->
+        <button id="nextBtn" onclick="navigateNext()" 
+                class="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xl hover:scale-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <ion-icon name="chevron-back" class="text-3xl"></ion-icon>
+        </button>
+    </div>
+
+    <!-- Help Button -->
+    <button id="helpBtn" onclick="toggleHelpModal()" 
+            class="fixed top-8 right-8 z-50 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-white shadow-xl hover:scale-110 hover:rotate-12 transition-all duration-300">
+        <ion-icon name="help" class="text-3xl"></ion-icon>
+    </button>
+    
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center mx-auto mb-6">
+                <ion-icon name="help-buoy" class="text-white text-5xl"></ion-icon>
+            </div>
+            <h3 class="text-2xl font-bold gradient-text mb-4">مركز المساعدة</h3>
+            <p id="helpMessageText" class="text-lg text-gray-600 leading-relaxed mb-6">هذا هو نص المساعدة...</p>
+            <button onclick="toggleHelpModal()" class="btn-primary">
+                <span class="flex items-center justify-center gap-2">
+                    فهمت
+                    <ion-icon name="checkmark-circle" class="text-xl"></ion-icon>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Global State and Configuration ---
+        const screens = [
+            { id: 'splashScreen', name: 'البداية' },
+            { id: 'preTestLinkScreen', name: 'الاختبار القبلي' },
+            { id: 'objectivesScreen', name: 'الأهداف' },
+            { id: 'groupSelectionScreen', name: 'اختيار المجموعة' },
+            { id: 'guideScreen', name: 'دليل الاستخدام' },
+            { id: 'referencesScreen', name: 'المراجع' },
+            { id: 'groupInfoScreen', name: 'الانضمام للمجموعة' }
+        ];
+        let currentScreenIndex = 0;
+        let userSelections = {
+            groupType: null,
+            timeType: null,
+            combinedKey: null
+        };
+        
+        let currentClassroomLink = '';
+
+        // Updated Classroom Data
+        const classroomData = {
+            'competitive-open': {
+                number: 'الأولى',
+                name: 'تنافسي بدون ضغط زمني',
+                link: 'https://classroom.google.com/c/ODIwMDY0OTU5ODIy?cjc=sclkhubr',
+                code: 'sclkhubr'
+            },
+            'competitive-fixed': {
+                number: 'الثانية',
+                name: 'تنافسي مقيد',
+                link: 'https://classroom.google.com/c/ODE2OTk3ODIzNDg2?cjc=zap2cudp',
+                code: 'zap2cudp'
+            },
+            'collaborative-open': {
+                number: 'الثالثة',
+                name: 'تشاركي مفتوح',
+                link: 'https://classroom.google.com/c/ODE2OTk3OTI5MDYz?cjc=6wasbi5g',
+                code: '6wasbi5g'
+            },
+            'collaborative-fixed': {
+                number: 'الرابعة',
+                name: 'تشاركي مقيد',
+                link: 'https://classroom.google.com/c/NzgxMjQ0MzEzNTc1?cjc=oststkcp',
+                code: 'oststkcp'
+            }
+        };
+
+        // Help Messages for each screen
+        const helpMessages = {
+            'splashScreen': "مرحباً بك! هذه الصفحة الرئيسية للتجربة. اقرأ المقدمة جيداً ثم اضغط 'ابدأ رحلة التعلم' للبدء.",
+            'preTestLinkScreen': "أكمل الاختبار القبلي المدمج في الصفحة. إذا واجهت مشكلة، استخدم زر 'فتح في نافذة جديدة'.",
+            'objectivesScreen': "تعرف على الأهداف التعليمية الخمسة للوحدة. اقرأها بعناية لتفهم ما هو متوقع منك.",
+            'groupSelectionScreen': "اختر مجموعتك بعناية! كل مجموعة لها طريقة عمل مختلفة. اقرأ الوصف جيداً قبل الاختيار.",
+            'guideScreen': "دليل سريع لاستخدام Google Classroom. تعرف على الأقسام الثلاثة الرئيسية للمنصة.",
+            'referencesScreen': "مراجع مختارة للتعمق في موضوعات الوحدة. يمكنك الرجوع إليها لاحقاً.",
+            'groupInfoScreen': "احفظ رمز الفصل الدراسي! ستحتاجه للانضمام إلى مجموعتك على Google Classroom."
+        };
+
+        // --- Navigation Logic ---
+        function showScreen(index) {
+            if (index < 0 || index >= screens.length) return;
+            currentScreenIndex = index;
+            screens.forEach((screen, i) => {
+                const el = document.getElementById(screen.id);
+                if (el) {
+                    el.classList.toggle('active', i === index);
+                }
+            });
+            updateNavigationControls();
+            window.scrollTo(0, 0);
+        }
+
+        function navigateNext() {
+            if (currentScreenIndex < screens.length - 1) {
+                showScreen(currentScreenIndex + 1);
+            }
+        }
+
+        function navigatePrevious() {
+            if (currentScreenIndex > 0) {
+                showScreen(currentScreenIndex - 1);
+            }
+        }
+
+        function updateNavigationControls() {
+            const navControls = document.getElementById('navigationControls');
+            const helpBtn = document.getElementById('helpBtn');
+            
+            // Hide navigation on last screen
+            if (currentScreenIndex === screens.length - 1) {
+                if(navControls) navControls.style.display = 'none';
+                if(helpBtn) helpBtn.style.display = 'none';
+            } else {
+                if(navControls) navControls.style.display = 'flex';
+                if(helpBtn) helpBtn.style.display = 'flex';
+            }
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicators = document.querySelectorAll('.nav-dot');
+
+            if(prevBtn) prevBtn.disabled = currentScreenIndex === 0;
+            if(nextBtn) nextBtn.disabled = currentScreenIndex === screens.length - 1;
+
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentScreenIndex);
+                indicator.classList.toggle('hidden', index >= screens.findIndex(s => s.id === 'groupInfoScreen'));
+            });
+        }
+        
+        function createNavIndicators() {
+            const container = document.getElementById('nav-indicators');
+            if (!container) return;
+            container.innerHTML = screens.map((screen, index) =>
+                `<div class="nav-dot" onclick="showScreen(${index})" title="${screen.name}"></div>`
+            ).join('');
+        }
+        
+        // --- Group Selection Logic ---
+        function selectGroup(selectionKey) {
+            document.querySelectorAll('[data-groupkey]').forEach(card => card.classList.remove('selected'));
+            document.querySelector(`[data-groupkey="${selectionKey}"]`).classList.add('selected');
+            
+            const [groupType, timeType] = selectionKey.split('-');
+            userSelections.groupType = groupType;
+            userSelections.timeType = timeType;
+            userSelections.combinedKey = selectionKey;
+            
+            document.getElementById('confirmGroupBtn').disabled = false;
+        }
+
+        function confirmGroupSelection() {
+            if (userSelections.combinedKey) {
+                const groupInfo = classroomData[userSelections.combinedKey];
+
+                if (groupInfo) {
+                    document.getElementById('groupNumber').textContent = groupInfo.number;
+                    document.getElementById('groupName').textContent = groupInfo.name;
+                    document.getElementById('groupCode').textContent = groupInfo.code;
+                    currentClassroomLink = groupInfo.link;
+                    navigateNext();
+                } else {
+                    alert('حدث خطأ غير متوقع.');
+                }
+            } else {
+                alert('يرجى اختيار مجموعة أولاً.');
+            }
+        }
+        
+        
+        function openClassroomLink() {
+            if (currentClassroomLink) {
+                window.open(currentClassroomLink, '_blank');
+            } else {
+                alert('لم يتم تحديد رابط المجموعة.');
+            }
+        }
+
+        // --- Help Modal Logic ---
+        function toggleHelpModal() {
+            const modal = document.getElementById('helpModal');
+            const msgText = document.getElementById('helpMessageText');
+            const currentScreenId = screens[currentScreenIndex].id;
+            
+            if (helpMessages[currentScreenId]) {
+                msgText.textContent = helpMessages[currentScreenId];
+            } else {
+                msgText.textContent = "لا توجد مساعدة متاحة لهذه الشاشة حالياً.";
+            }
+            
+            modal.classList.toggle('active');
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            createNavIndicators();
+            showScreen(0);
+            
+            // Close modal on overlay click
+            document.getElementById('helpModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    toggleHelpModal();
+                }
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.target.tagName.toLowerCase() === 'textarea' || e.target.tagName.toLowerCase() === 'input') return;
+                
+                const modal = document.getElementById('helpModal');
+                if (modal.classList.contains('active') && e.key === 'Escape') {
+                    toggleHelpModal();
+                    return;
+                }
+                
+                if (!modal.classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') {
+                        if (document.dir === 'rtl') navigateNext();
+                        else navigatePrevious();
+                    }
+                    if (e.key === 'ArrowRight') {
+                        if (document.dir === 'rtl') navigatePrevious();
+                        else navigateNext();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
